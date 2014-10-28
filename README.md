@@ -9,10 +9,10 @@ Java Rest API for neo4j
 
 Example:
 ================
-Neo4jREST connection = new Neo4jREST("localhost", 7474, "/db/data/", "", "", "cypher", false);
-String sql = "start n=node(*) where n.type = 'Country' return n.code as code, n.name as name";
-CypherStatement cypherStatement = new CypherStatement(sql, new HashMap());
-Stream<CypherResultRow> countries = cypherStatement.apply(connection);
+.Neo4jREST connection = new Neo4jREST("localhost", 7474, "/db/data/", "", "", "cypher", false);
+.String sql = "start n=node(*) where n.type = 'Country' return n.code as code, n.name as name";
+.CypherStatement cypherStatement = new CypherStatement(sql, new HashMap());
+.Stream<CypherResultRow> countries = cypherStatement.apply(connection);
         StreamIterator<CypherResultRow> it = (StreamIterator<CypherResultRow>) countries.iterator();
         while (it.hasNext()) {
             CypherResultRow row = it.next();
