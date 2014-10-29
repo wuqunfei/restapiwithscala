@@ -17,13 +17,13 @@ import static org.junit.Assert.*;
  */
 
 public class Neo4jRestApiTest {
-    Neo4jREST rest = new Neo4jREST("localhost", 7474, "/db/data/", "", "", "cypher", false);
+
     Neo4jRestApiAdapter adapter = null;
 
-    @BeforeClass
-
+    @Before
     public void setup() throws Exception {
-        adapter = new Neo4jRestApi(this.rest);
+        Neo4jREST rest = new Neo4jREST("localhost", 7474, "/db/data/", "", "", "cypher", false);
+        adapter = new Neo4jRestApi(rest);
     }
 
 
