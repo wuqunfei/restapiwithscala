@@ -54,7 +54,7 @@ public class Neo4jRestApiTest {
 
     @Test
     public void testRunMulticolumnCypherQuery() throws Exception {
-        String query = "match (u:person  {uuid:{pid}} ),(t.task  {uuid:{tid}} ) return u,t";
+        String query = "match (u:person {uuid:{pid}}),(t:task {uuid:{tid}}) return u,t";
         HashMap<String, Object> params = new HashMap<>();
         params.put("pid", "u1");
         params.put("tid", "u3");
@@ -64,7 +64,7 @@ public class Neo4jRestApiTest {
 
     @Test
     public void testRunQuery() throws Exception {
-        String query = "match (u:person {uuid:{pid}} return u";
+        String query = "match (u:person {uuid:{pid}}) return u";
         HashMap<String, Object> params = new HashMap<>();
         params.put("pid", "u1");
         String responseBodyString = this.adapter.runQuery(query, params);
