@@ -46,8 +46,8 @@ public class MyTest {
         Neo4jRestApiAdapter adapter = new Neo4jRestApi();
         java.util.HashMap<String, Object> params = new java.util.HashMap<>();
         params.put("pn", "Germany");
-        List<Map<String, Object>> rows = adapter.runParametrizedCypherQuery("match (n) where n.name = {pn} return n", params);
-//        List<Map<String, Object>> rows = adapter.runParametrizedCypherQuery("match (n) where n.name = \"Germany\" return n;");
+        List<Map<String, Object>> rows = adapter.runOneColumnCypherQuery("match (n) where n.name = {pn} return n", params);
+//        List<Map<String, Object>> rows = adapter.runParametrizedCypherQuery("match (n),(u:person) where n.name = \"Germany\" and u.username=\"U-251051802\" return n.name,n.code");
         System.out.print(rows.size());
     }
 }

@@ -53,6 +53,44 @@ class Neo4jREST(val host: String = "localhost", val port: Int = 7474, val path: 
     }.toStream
     data
   }
+
+  def sendQueryString(cypherStatement: CypherStatement): String = {
+    implicit val csw = Neo4jREST.cypherStatementWrites
+    implicit val csr = Neo4jREST.cypherRESTResultReads
+    var address = baseURL + cypherEndpoint
+    var params = Json.prettyPrint(Json.toJson(cypherStatement))
+
+    var httpClient = new HttpClient
+    val requestBody = RequestBody(params, APPLICATION_JSON)
+    var request = Request.post(address, Some(requestBody))
+    var response = httpClient.makeRequest(request + Headers.apply(headers))
+
+    val strResult = response.body.asString
+    if (response.status.code != 200) throw new RuntimeException(strResult)
+    strResult
+  }
+
+  def sendQueryPath(cypherStatement: CypherStatement, cypherPath: String): Stream[CypherResultRow] = {
+    implicit val csw = Neo4jREST.cypherStatementWrites
+    implicit val csr = Neo4jREST.cypherRESTResultReads
+    var address = baseURL + cypherPath
+    var params = Json.prettyPrint(Json.toJson(cypherStatement))
+
+    var httpClient = new HttpClient
+
+    val response = httpClient.get(address, Headers.apply(headers))
+    var strResult = response.body.asString
+    if (response.status.code != 200) throw new RuntimeException(strResult)
+    val cypherRESTResult = Json.fromJson[CypherRESTResult](Json.parse(strResult)).get
+    val metaDataItems = cypherRESTResult.columns.map {
+      c => MetaDataItem(c, false, "String")
+    }.toList
+    val metaData = MetaData(metaDataItems)
+    val data = cypherRESTResult.data.map {
+      d => CypherResultRow(metaData, d.toList)
+    }.toStream
+    data
+  }
 }
 
 object Neo4jREST {
@@ -113,8 +151,8 @@ object Neo4jREST {
               key -> JsArray(ss.map(s => JsString(s.asInstanceOf[String])))
             case sam: Map[_, _] if (sam.keys.forall(_.isInstanceOf[String])) =>
               key -> writes(sam.asInstanceOf[Map[String, Any]])
-            case sm: Seq[Map[_,_]] if (sm.forall(_.isInstanceOf[Map[String,Any]])) =>
-              key -> JsArray(sm.map(m => writes(m.asInstanceOf[Map[String,Any]])))
+            case sm: Seq[Map[_, _]] if (sm.forall(_.isInstanceOf[Map[String, Any]])) =>
+              key -> JsArray(sm.map(m => writes(m.asInstanceOf[Map[String, Any]])))
             case xs: Seq[_] => throw new RuntimeException(s"unsupported Neo4j array type: $xs (mixed types?)")
             case x => throw new RuntimeException(s"unsupported Neo4j type: $x")
           }
