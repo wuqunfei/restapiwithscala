@@ -63,9 +63,12 @@ public class Neo4jRestApi implements Neo4jRestApiAdapter {
             if (row.metaData().columnCount() == 1) {
                 scala.collection.immutable.List<String> keys = row.metaData().availableColumns();
                 String key = keys.head();
-                scala.collection.Map<String, Object> ds = (scala.collection.Map<String, Object>) map.get(key);
-                Map<String, Object> javaMap = JavaConverters.mapAsJavaMapConverter(ds).asJava();
-                data.add(javaMap);
+                scala.Some some = (scala.Some) map.get(key);
+                scala.collection.Map<String, Object> ds = (scala.collection.Map<String, Object>) some.x();
+                scala.Some insideSome = (scala.Some) ds.get("data");
+                scala.collection.immutable.Map<String, Object> insideds = (scala.collection.immutable.Map<String, Object>) insideSome.x();
+                Map<String, Object> insideMap = JavaConverters.mapAsJavaMapConverter(insideds).asJava();
+                data.add(insideMap);
             }
         }
         return data;
@@ -84,8 +87,11 @@ public class Neo4jRestApi implements Neo4jRestApiAdapter {
             Map<String, Map<String, Object>> outsideMap = new HashMap<>();
             while (itKeys.hasNext()) {
                 String key = itKeys.next();
-                scala.collection.immutable.Map<String, Object> ds = (scala.collection.immutable.Map<String, Object>) map.get(key);
-                Map<String, Object> insideMap = JavaConverters.mapAsJavaMapConverter(ds).asJava();
+                scala.Some some = (scala.Some) map.get(key);
+                scala.collection.immutable.HashMap<String, Object> ds = (scala.collection.immutable.HashMap<String, Object>) some.x();
+                scala.Some insideSome = (scala.Some) ds.get("data");
+                scala.collection.immutable.Map<String, Object> insideds = (scala.collection.immutable.Map<String, Object>) insideSome.x();
+                Map<String, Object> insideMap = JavaConverters.mapAsJavaMapConverter(insideds).asJava();
                 outsideMap.put(key, insideMap);
             }
             data.add(outsideMap);
@@ -119,7 +125,7 @@ public class Neo4jRestApi implements Neo4jRestApiAdapter {
     public List<Map<String, Object>> getConstraints() {
         List<Map<String, Object>> data = new ArrayList<>();
         CypherStatement cypherStatement = new CypherStatement(null, new scala.collection.immutable.HashMap<String, Object>());
-        Stream<CypherResultRow> rows = cypherStatement.apply(this.connection);
+        Stream<CypherResultRow> rows = cypherStatement.applyPath(this.connection, "schema/constraint");
         StreamIterator<CypherResultRow> it = (StreamIterator<CypherResultRow>) rows.iterator();
         while (it.hasNext()) {
             CypherResultRow row = it.next();
@@ -127,7 +133,6 @@ public class Neo4jRestApi implements Neo4jRestApiAdapter {
             Map<String, Object> javaMap = JavaConverters.mapAsJavaMapConverter(map).asJava();
             data.add(javaMap);
         }
-        cypherStatement.applyPath(this.connection, "constraint");
         return data;
     }
 
@@ -135,7 +140,7 @@ public class Neo4jRestApi implements Neo4jRestApiAdapter {
     public List<Map<String, Object>> getIndexes() {
         List<Map<String, Object>> data = new ArrayList<>();
         CypherStatement cypherStatement = new CypherStatement(null, new scala.collection.immutable.HashMap<String, Object>());
-        Stream<CypherResultRow> rows = cypherStatement.apply(this.connection);
+        Stream<CypherResultRow> rows = cypherStatement.applyPath(this.connection, "schema/index");
         StreamIterator<CypherResultRow> it = (StreamIterator<CypherResultRow>) rows.iterator();
         while (it.hasNext()) {
             CypherResultRow row = it.next();
@@ -143,7 +148,6 @@ public class Neo4jRestApi implements Neo4jRestApiAdapter {
             Map<String, Object> javaMap = JavaConverters.mapAsJavaMapConverter(map).asJava();
             data.add(javaMap);
         }
-        cypherStatement.applyPath(this.connection, "index");
         return data;
     }
 
