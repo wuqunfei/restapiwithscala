@@ -21,7 +21,16 @@ import java.util.Map;
  */
 public class Neo4jRestApi implements Neo4jRestApiAdapter {
     Logger logger = LoggerFactory.getLogger(this.getClass());
-    Neo4jREST connection = new Neo4jREST("localhost", 7474, "/db/data/", "", "", "cypher", false);
+    Neo4jREST connection = null;
+
+    public Neo4jRestApi(Neo4jREST rest) {
+        if (rest == null) {
+            this.connection = new Neo4jREST("localhost", 7474, "/db/data/", "", "", "cypher", false);
+        } else {
+            this.connection = rest;
+        }
+
+    }
 
     public List<Map<String, Object>> runParametrizedCypherQuery(String query, Map<String, Object> params) {
         List<Map<String, Object>> data = new ArrayList<>();
