@@ -71,35 +71,42 @@ public class Neo4jRestApiTest {
         assertTrue(responseBodyString.contains("columns") && responseBodyString.contains("data"));
     }
 
-    @Test
-    public void testSchemaIsCorrectlyLoaded() throws Exception {
-        assertTrue(this.adapter.schemaIsCorrectlyLoaded());
-    }
-
-    @Test
-    public void testGetConstraints() throws Exception {
-        assertTrue(this.adapter.getConstraints().size() >= 0);
-    }
-
-    @Test
-    public void testGetIndexes() throws Exception {
-        assertTrue(this.adapter.getIndexes().size() >= 0);
-    }
 
     @Test
     public void testCreateIndex() throws Exception {
         this.adapter.createConstraint("person", "name");
     }
 
-    @Test
-    public void testDropIndex() throws Exception {
-        this.adapter.dropIndex("person", "name");
-    }
 
     @Test
     public void testCreateConstraint() throws Exception {
         this.adapter.createConstraint("person", "email");
     }
+
+
+    @Test
+    public void testGetConstraints() throws Exception {
+        assertTrue(this.adapter.getConstraints().size() >= 0);
+    }
+
+
+    @Test
+    public void testSchemaIsCorrectlyLoaded() throws Exception {
+        assertTrue(this.adapter.schemaIsCorrectlyLoaded());
+    }
+
+
+    @Test
+    public void testGetIndexes() throws Exception {
+        assertTrue(this.adapter.getIndexes().size() >= 0);
+    }
+
+
+    @Test
+    public void testDropIndex() throws Exception {
+        this.adapter.dropIndex("person", "name");
+    }
+
 
     @Test
     public void testDropConstraint() throws Exception {
