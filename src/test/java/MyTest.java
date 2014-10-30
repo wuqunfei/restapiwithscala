@@ -43,7 +43,7 @@ public class MyTest {
     }
 
     public static void test() {
-        Neo4jRestApiAdapter adapter = new Neo4jRestApi(null);
+        Neo4jRestApiAdapter adapter = new Neo4jRestApi(null,true);
         java.util.HashMap<String, Object> params = new java.util.HashMap<>();
         params.put("pn", "Germany");
         List<Map<String, Object>> rows = adapter.runOneColumnCypherQuery("match (n) where n.name = {pn} return n", params);

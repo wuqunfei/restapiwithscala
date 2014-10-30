@@ -11,10 +11,7 @@ import scala.collection.JavaConverters;
 import scala.collection.immutable.Stream;
 import scala.collection.immutable.StreamIterator;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by qunfei on 10/28/14.
@@ -22,8 +19,10 @@ import java.util.Map;
 public class Neo4jRestApi implements Neo4jRestApiAdapter {
     Logger logger = LoggerFactory.getLogger(this.getClass());
     Neo4jREST connection = null;
+    Boolean isFilterName = true;
 
-    public Neo4jRestApi(Neo4jREST rest) {
+    public Neo4jRestApi(Neo4jREST rest, Boolean isFilterName) {
+        this.isFilterName = isFilterName;
         if (rest == null) {
             this.connection = new Neo4jREST("localhost", 7474, "/db/data/", "", "", "cypher", false);
         } else {
@@ -41,7 +40,22 @@ public class Neo4jRestApi implements Neo4jRestApiAdapter {
             CypherResultRow row = it.next();
             scala.collection.Map<String, Object> map = row.asMap();
             Map<String, Object> javaMap = JavaConverters.mapAsJavaMapConverter(map).asJava();
-            data.add(javaMap);
+            if (this.isFilterName) {
+                Map<String, Object> filterMap = new HashMap<>();
+                Iterator<String> itt = javaMap.keySet().iterator();
+                while (itt.hasNext()) {
+                    String key = itt.next();
+                    if (key.contains(".")) {
+                        String[] keys = key.split("\\.");
+                        String newKey = keys[keys.length - 1];
+                        filterMap.put(newKey, javaMap.get(key));
+                    }
+                }
+                data.add(filterMap);
+            } else {
+                data.add(javaMap);
+            }
+
         }
         return data;
     }

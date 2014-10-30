@@ -23,7 +23,7 @@ public class Neo4jRestApiTest {
     @Before
     public void setup() throws Exception {
         Neo4jREST rest = new Neo4jREST("localhost", 7474, "/db/data/", "", "", "cypher", false);
-        adapter = new Neo4jRestApi(rest);
+        adapter = new Neo4jRestApi(rest, true);
     }
 
 
@@ -33,7 +33,7 @@ public class Neo4jRestApiTest {
         HashMap<String, Object> params = new HashMap<>();
         params.put("pid", "u1");
         List<Map<String, Object>> list = this.adapter.runParametrizedCypherQuery(query, params);
-        assertEquals("Tom", list.get(0).get("u.name"));
+        assertEquals("Tom", list.get(0).get("name"));
     }
 
     @Test
@@ -71,7 +71,6 @@ public class Neo4jRestApiTest {
         assertTrue(responseBodyString.contains("columns") && responseBodyString.contains("data"));
     }
 
-
     @Test
     public void testCreateIndex() throws Exception {
         this.adapter.createConstraint("person", "name");
@@ -83,19 +82,19 @@ public class Neo4jRestApiTest {
         this.adapter.createConstraint("person", "email");
     }
 
-
+    @Ignore
     @Test
     public void testGetConstraints() throws Exception {
         assertTrue(this.adapter.getConstraints().size() >= 0);
     }
 
-
+    @Ignore
     @Test
     public void testSchemaIsCorrectlyLoaded() throws Exception {
         assertTrue(this.adapter.schemaIsCorrectlyLoaded());
     }
 
-
+    @Ignore
     @Test
     public void testGetIndexes() throws Exception {
         assertTrue(this.adapter.getIndexes().size() >= 0);
