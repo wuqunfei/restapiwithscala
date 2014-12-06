@@ -1,11 +1,15 @@
-Java Rest API for neo4j
+Rest API for neo4j, mix java and scala
 ================
+Why develop this lib?
+================
+In Java, there is not original and good api for neo4j REST service, so I just scala lib and java to build one.
+Easy to convert neo4j Cypher Query Response, Easy to use in Java maven Dependency.
 
+Dependency  
+================
 1. java version 1.7
 2. scala version 2.11.0
-3. http lib from http://www.bigbeeconsultants.co.uk/
-4. scala neo4j from https://github.com/AnormCypher/AnormCypher
-5. maven scala plugin http://davidb.github.io/scala-maven-plugin/example_compile.html
+3. maven scala plugin http://davidb.github.io/scala-maven-plugin/example_compile.html
 
 Example:
 ================
