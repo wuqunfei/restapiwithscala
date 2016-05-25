@@ -13,6 +13,8 @@ Dependency
 
 Example:
 ================
+
+```
 1.Neo4jREST connection = new Neo4jREST("localhost", 7474, "/db/data/", "", "", "cypher", false);
 2.String sql = "start n=node(*) where n.type = 'Country' return n.code as code, n.name as name";
 3.CypherStatement cypherStatement = new CypherStatement(sql, new HashMap());
@@ -25,3 +27,4 @@ Example:
             System.out.println(row.data());
             System.out.println(row.metaData());
  }
+```
